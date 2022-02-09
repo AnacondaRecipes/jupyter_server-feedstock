@@ -22,6 +22,8 @@ requirements:
     - python
     - jupyter-packaging >=0.9,<1
     - pip
+    - setuptools
+    - wheel
   run:
     - python >=3.7
     - anyio >=3.1.0,<4
