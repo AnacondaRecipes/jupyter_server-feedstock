@@ -12,6 +12,8 @@ source:
 build:
   number: 0
   noarch: python
+  # anyio >=3.1.0,<4 and websocket-client currentrly aren't available on s390x.
+  skip: True  # [s390x]
   script:
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   entry_points:
@@ -52,7 +54,8 @@ test:
   imports:
     - jupyter_server
   downstreams:
-    - jupyterlab >=3.2
+  # nodejs >=14,<15 currently isn't available on osx-arm64
+    - jupyterlab >=3.2  # [not (osx and arm64)]
 
 about:
   home: https://jupyter.org
