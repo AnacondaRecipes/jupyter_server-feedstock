@@ -13,7 +13,6 @@ build:
   number: 0
   noarch: python
   # anyio >=3.1.0,<4 and websocket-client currentrly aren't available on s390x.
-  skip: True  # [s390x]
   script:
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   entry_points:
