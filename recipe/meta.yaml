@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "1.13.5" %}
+{% set version = "1.17.1" %}
 
 package:
   name: {{ name }}
@@ -7,41 +7,41 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 9e3e9717eea3bffab8cfb2ff330011be6c8bbd9cdae5b71cef169fcece2f19d3
+  sha256: a36781656645ae17b12819a49ace377c045bf633823b3e4cd4b0c88c01e7711b
 
 build:
   number: 0
-  noarch: python
-  # anyio >=3.1.0,<4 and websocket-client currentrly aren't available on s390x.
-  script:
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+  skip: True  # [py<37]
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
   host:
     - python
-    - jupyter-packaging >=0.9,<1
+    # To avoid ImportError: cannot import name 'StaticModule' from 'setuptools.config'
+    # we should use jupyter-packaging >=0.12.0
+    - jupyter-packaging >=0.12.0,<1
     - pip
     - setuptools
     - wheel
   run:
-    - python >=3.7
+    - python
     - anyio >=3.1.0,<4
     - argon2-cffi
-    - ipython_genutils
     - jinja2
-    - jupyter_client >=6.1.1
-    - jupyter_core >=4.6.0
-    - nbconvert
-    - nbformat
+    - jupyter_client >=6.1.12
+    - jupyter_core >=4.7.0
+    - nbconvert >=6.4.4  # avoid hard dependency on pandoc
+    - nbformat >=5.2.0
     - packaging
     - prometheus_client
+    - pywinpty  # [win]
     - pyzmq >=17
     - send2trash
     - terminado >=0.8.3
     - tornado >=6.1.0
-    - traitlets >=5
+    - traitlets >=5.1
     - websocket-client
 
 test:
@@ -53,8 +53,10 @@ test:
   imports:
     - jupyter_server
   downstreams:
-  # nodejs >=14,<15 currently isn't available on osx-arm64
-    - jupyterlab >=3.2  # [not (osx and arm64)]
+    # nodejs >=14,<15 currently isn't available on osx-arm64
+    # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
+    - jupyterlab >=3.2  # [not ((osx and arm64) or win or s390x)]
+    - jupyterlab_server >=2.10  # [linux and s390x]
 
 about:
   home: https://jupyter.org
