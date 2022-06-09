@@ -11,8 +11,7 @@ source:
 
 build:
   number: 0
-  # anyio >=3.1.0,<4 and websocket-client currentrly aren't available on s390x.
-  skip: True  # [py<37 or s390x]
+  skip: True  # [py<37]
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
