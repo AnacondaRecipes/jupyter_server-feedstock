@@ -27,7 +27,7 @@ requirements:
     - wheel
   run:
     - python
-    - anyio >=3.1.0
+    - anyio >=3.1.0,<4
     - argon2-cffi
     - jinja2
     - jupyter_client >=6.1.12
