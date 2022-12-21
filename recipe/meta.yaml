@@ -52,11 +52,11 @@ test:
     - jupyter server -h
   imports:
     - jupyter_server
-  #downstreams:
+  downstreams:
     # nodejs >=14,<15 currently isn't available on osx-arm64
     # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
-    #- jupyterlab >=3.2  # [not ((osx and arm64) or win or s390x)]
-    #- jupyterlab_server >=2.14.0  # [not (linux and s390x)]
+    - jupyterlab >=3.2  # [not ((osx and arm64) or win or s390x)]
+    - jupyterlab_server >=2.14.0  # [not (linux and s390x)]
 
 about:
   home: https://jupyter.org
