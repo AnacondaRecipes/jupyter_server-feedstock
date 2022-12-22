@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "1.18.1" %}
+{% set version = "1.23.4" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 2b72fc595bccae292260aad8157a0ead8da2c703ec6ae1bb7b36dbad0e267ea7
+  sha256: 4ee4f311bd944bcf8060a8b746059571c40f6b8ada1d1e6e51239d26ab23b15c
 
 build:
   number: 0
@@ -56,7 +56,7 @@ test:
     # nodejs >=14,<15 currently isn't available on osx-arm64
     # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
     #- jupyterlab >=3.2  # [not ((osx and arm64) or win or s390x)]
-    #- jupyterlab_server >=2.10  # [linux and s390x]
+    #- jupyterlab_server >=2.14.0  # [not (linux and s390x)]
 
 about:
   home: https://jupyter.org
