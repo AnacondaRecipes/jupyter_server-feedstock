@@ -11,6 +11,8 @@ source:
 
 build:
   number: 0
+  # This package depends on jupyter_events, which eventually depends on y-py which isn't available on
+  # s390x because of rust toolchain issues.
   skip: true  # [py<38 or s390x]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
   entry_points:
@@ -20,8 +22,8 @@ requirements:
   host:
     - pip
     - nodejs 18.15.0
-    - hatch-jupyter-builder >=0.8.1
-    - hatchling >=1.11
+    - hatch-jupyter-builder 0.8.3
+    - hatchling 1.12.2
     - python
     - setuptools
     - wheel
@@ -37,7 +39,7 @@ requirements:
     - nbconvert >=6.4.4  # avoid hard dependency on pandoc (TODO nbconvert-core???)
     - nbformat >=5.3.0
     - prometheus_client
-    # - pywinpty  # [win]  # rely on terminado to get this to keep noarch
+    - pywinpty  # [win] 
     - pyzmq >=24
     - send2trash
     - terminado >=0.8.3
