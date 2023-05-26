@@ -39,7 +39,7 @@ requirements:
     - nbconvert >=6.4.4  # avoid hard dependency on pandoc (TODO nbconvert-core???)
     - nbformat >=5.3.0
     - prometheus_client
-    - pywinpty  # [win] 
+    - pywinpty  # [win]
     - pyzmq >=24
     - send2trash
     - terminado >=0.8.3
