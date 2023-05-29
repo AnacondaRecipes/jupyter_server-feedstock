@@ -8,6 +8,10 @@ package:
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: 9fde612791f716fd34d610cd939704a9639643744751ba66e7ee8fdc9cead07e
+  patches:
+    # tests fail on some platforms because server doesn't start as
+    # root by default
+    - 00_allow_root_in_tests.patch
 
 build:
   number: 0
@@ -19,6 +23,9 @@ build:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
+  build:
+    - patch    # [not win]
+    - m2-patch # [win]
   host:
     - pip
     - nodejs 18.15.0
@@ -55,6 +62,7 @@ test:
     # test deps
     - coverage
     - ipykernel
+    - posix # [win]
     - pytest >=7.0
     - pytest-console-scripts
     - pytest-cov
