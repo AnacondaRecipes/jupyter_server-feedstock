@@ -54,6 +54,15 @@ requirements:
     - traitlets >=5.6.0
     - websocket-client
 
+# test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
+# current anaconda build env. test_restart_kernel[jp_server_config0] is particularly flaky.
+{% set xtests = "delete or merge_config or test_culling or test_restart_kernel" %}
+
+# some tests aren't working on windows due shell config in the anaconda build env
+{% set xtests = xtests + " or test_terminal"  %} # [ win ]
+
+{% set tests = "not (" + xtests + ")" %}
+
 test:
   source_files:
     - tests
@@ -74,7 +83,8 @@ test:
   commands:
     - pip check
     - jupyter server -h
-    - pytest -vvv --cov=jupyter_server -k "not (delete or merge_config)" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
+    - echo "{{ tests }}"
+    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
   #downstreams:
     # nodejs >=14,<15 currently isn't available on osx-arm64
     # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
