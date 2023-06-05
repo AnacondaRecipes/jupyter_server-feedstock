@@ -62,7 +62,7 @@ requirements:
 
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
-{% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
+{% set xtests = xtests + ["test_terminal", "test_authorized_requests", "test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
