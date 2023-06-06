@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "1.23.4" %}
+{% set version = "2.5.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,22 +7,31 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 4ee4f311bd944bcf8060a8b746059571c40f6b8ada1d1e6e51239d26ab23b15c
+  sha256: 9fde612791f716fd34d610cd939704a9639643744751ba66e7ee8fdc9cead07e
+  patches:
+    # tests fail on some platforms because server doesn't start as
+    # root by default
+    - 00_allow_root_in_tests.patch
 
 build:
   number: 0
-  skip: True  # [py<37]
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+  # This package depends on jupyter_events, which eventually depends on y-py which isn't available on
+  # s390x because of rust toolchain issues.
+  skip: true  # [py<38 or s390x]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
+  build:
+    - patch    # [not win]
+    - m2-patch # [win]
   host:
-    - python
-    # To avoid ImportError: cannot import name 'StaticModule' from 'setuptools.config'
-    # we should use jupyter-packaging >=0.12.0
-    - jupyter-packaging >=0.12.0,<1
     - pip
+    - nodejs 18.15.0
+    - hatch-jupyter-builder 0.8.3
+    - hatchling 1.12.2
+    - python
     - setuptools
     - wheel
   run:
@@ -30,28 +39,55 @@ requirements:
     - anyio >=3.1.0,<4
     - argon2-cffi
     - jinja2
-    - jupyter_client >=6.1.12
-    - jupyter_core >=4.7.0
-    - nbconvert >=6.4.4  # avoid hard dependency on pandoc
-    - nbformat >=5.2.0
-    - packaging
+    - jupyter_client >=7.4.4
+    - jupyter_core >=4.12,!=5.0.*
+    - jupyter_events >=0.4.0
+    - jupyter_server_terminals
+    - nbconvert >=6.4.4  # avoid hard dependency on pandoc (TODO nbconvert-core???)
+    - nbformat >=5.3.0
     - prometheus_client
     - pywinpty  # [win]
-    - pyzmq >=17
+    - pyzmq >=24
     - send2trash
     - terminado >=0.8.3
-    - tornado >=6.1.0
-    - traitlets >=5.1
+    - tornado >=6.2.0
+    - traitlets >=5.6.0
     - websocket-client
 
+{% set xtests = ["delete", "merge_config", "test_culling"] %}
+
+# test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
+# current anaconda build env
+{% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]"] %}
+
+# some tests aren't working on windows due shell config in the anaconda build env
+# Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
+{% set xtests = xtests + ["test_terminal", "test_authorized_requests", "test_bad_symlink", "test_good_symlink"]  %} # [ win ]
+
+{% set tests = "not (" + " or ".join(xtests) + ")" %}
+
 test:
+  source_files:
+    - tests
   requires:
     - pip
+    # test deps
+    - coverage
+    - ipykernel
+    - posix # [win]
+    - pytest >=7.0
+    - pytest-console-scripts
+    - pytest-cov
+    - pytest-timeout
+    - pytest-jupyter-server >=0.6.0
+    - requests
+  imports:
+    - jupyter_server
   commands:
     - pip check
     - jupyter server -h
-  imports:
-    - jupyter_server
+    - echo "{{ tests }}"
+    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
   #downstreams:
     # nodejs >=14,<15 currently isn't available on osx-arm64
     # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
@@ -62,7 +98,7 @@ about:
   home: https://jupyter.org
   license: BSD-3-Clause
   license_family: BSD
-  license_file: COPYING.md
+  license_file: LICENSE
   summary: Jupyter Server
   description: The Jupyter Server provides the backend for Jupyter web applications such as the Jupyter notebook and JupyterLab.
   dev_url: https://github.com/jupyter/jupyter_server

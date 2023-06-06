@@ -1,0 +1,13 @@
+*** tests/extension/test_launch.py	Sat Feb  1 16:00:00 2020
+--- tests/extension/test_launch.py	Mon May 29 15:58:58 2023
+***************
+*** 73,78 ****
+--- 73,79 ----
+                  f"--port={port}",
+                  "--ip=127.0.0.1",
+                  "--no-browser",
++                 "--allow-root",
+                  *argv,
+              ],
+              cwd=str(root),
+
