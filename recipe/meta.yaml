@@ -14,7 +14,7 @@ source:
     - 00_allow_root_in_tests.patch
 
 build:
-  number: 0
+  number: 1
   # This package depends on jupyter_events, which eventually depends on y-py which isn't available on
   # s390x because of rust toolchain issues.
   skip: true  # [py<38 or s390x]
@@ -30,7 +30,7 @@ requirements:
     - pip
     - nodejs 18.15.0
     - hatch-jupyter-builder 0.8.3
-    - hatchling 1.12.2
+    - hatchling 1.18
     - python
     - setuptools
     - wheel
