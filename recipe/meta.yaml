@@ -29,8 +29,8 @@ requirements:
   host:
     - pip
     - nodejs 18.15.0
-    - hatch-jupyter-builder 0.8.3
-    - hatchling 1.18
+    - hatch-jupyter-builder
+    - hatchling
     - python
     - setuptools
     - wheel
