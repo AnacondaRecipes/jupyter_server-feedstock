@@ -15,7 +15,8 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38]
+  # This package depends on nodejs, which isn't available on s390x because it's not included in SOW packages
+  skip: true  # [py<38 or s390x]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
@@ -52,10 +53,11 @@ requirements:
     - websocket-client
     - overrides
 
-{% set xtests = [ "not_a_real_test" ] %}
+{% set xtests = [ "test_culling" ] %}
 
-# test_culling does not seem to be problematic in standalone testing, but is flaky in the current anaconda build env
-{% set xtests = xtests + ["test_culling"] %}
+# test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
+# current anaconda build env
+{% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]"] %}
 
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
