@@ -53,6 +53,14 @@ requirements:
     - overrides
 
 {% set xtests = [ "not_a_real_test" ] %}
+
+# test_culling does not seem to be problematic in standalone testing, but is flaky in the current anaconda build env
+{% set xtests = xtests + ["test_culling"] %}
+
+# some tests aren't working on windows due shell config in the anaconda build env
+# Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
+{% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
+
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 test:
