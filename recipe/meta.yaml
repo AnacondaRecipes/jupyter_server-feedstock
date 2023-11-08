@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.5.0" %}
+{% set version = "2.10.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,18 +7,17 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 9fde612791f716fd34d610cd939704a9639643744751ba66e7ee8fdc9cead07e
+  sha256: 47b8f5e63440125cb1bb8957bf12b18453ee5ed9efe42d2f7b2ca66a7019a278
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
     - 00_allow_root_in_tests.patch
 
 build:
-  number: 1
-  # This package depends on jupyter_events, which eventually depends on y-py which isn't available on
-  # s390x because of rust toolchain issues.
+  number: 0
+  # This package depends on nodejs, which isn't available on s390x because it's not included in SOW packages
   skip: true  # [py<38 or s390x]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
 
@@ -30,31 +29,31 @@ requirements:
     - pip
     - nodejs 18.15.0
     - hatch-jupyter-builder
-    - hatchling
+    - hatchling >=1.11
     - python
-    - setuptools
-    - wheel
   run:
     - python
-    - anyio >=3.1.0,<4
+    - anyio >=3.1.0
     - argon2-cffi
     - jinja2
     - jupyter_client >=7.4.4
     - jupyter_core >=4.12,!=5.0.*
-    - jupyter_events >=0.4.0
+    - jupyter_events >=0.6.0
     - jupyter_server_terminals
     - nbconvert >=6.4.4  # avoid hard dependency on pandoc (TODO nbconvert-core???)
     - nbformat >=5.3.0
+    - packaging
     - prometheus_client
     - pywinpty  # [win]
     - pyzmq >=24
-    - send2trash
+    - send2trash >=1.8.2
     - terminado >=0.8.3
     - tornado >=6.2.0
     - traitlets >=5.6.0
     - websocket-client
+    - overrides
 
-{% set xtests = ["delete", "merge_config", "test_culling"] %}
+{% set xtests = [ "test_culling" ] %}
 
 # test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
 # current anaconda build env
@@ -62,7 +61,7 @@ requirements:
 
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
-{% set xtests = xtests + ["test_terminal", "test_authorized_requests", "test_bad_symlink", "test_good_symlink"]  %} # [ win ]
+{% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
 
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
@@ -79,8 +78,9 @@ test:
     - pytest-console-scripts
     - pytest-cov
     - pytest-timeout
-    - pytest-jupyter-server >=0.6.0
+    - pytest-jupyter-server >=0.4
     - requests
+    - flaky
   imports:
     - jupyter_server
   commands:
@@ -89,10 +89,8 @@ test:
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
   #downstreams:
-    # nodejs >=14,<15 currently isn't available on osx-arm64
-    # Skip win because of a false positive pip check fail: jupyter-server 1.13.5 has requirement pywinpty<2
-    #- jupyterlab >=3.2  # [not ((osx and arm64) or win or s390x)]
-    #- jupyterlab_server >=2.14.0  # [not (linux and s390x)]
+    #- jupyterlab
+    #- jupyterlab_server
 
 about:
   home: https://jupyter.org
