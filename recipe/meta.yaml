@@ -27,7 +27,7 @@ requirements:
     - m2-patch # [win]
   host:
     - pip
-    - nodejs 18.15.0
+    - nodejs 18.16.0
     - hatch-jupyter-builder
     - hatchling >=1.11
     - python
