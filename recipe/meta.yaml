@@ -1,13 +1,15 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.15.0" %}
+{% set version = "2.16.0" %}
+{% set xtests = "xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"]" %}
+{% set tests = ""not (" + " or ".join(xtests) + ")"" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 9d446b8697b4f7337a1b7cdcac40778babdd93ba614b6d68ab1c0c918f1c4084
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 65d4b44fdf2dcbbdfe0aa1ace4a842d4aaf746a2b7b168134d5aaed35621b7f6
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
@@ -23,8 +25,8 @@ build:
 
 requirements:
   build:
-    - patch    # [not win]
-    - m2-patch # [win]
+    - patch  # [not win]
+    - m2-patch  # [win]
   host:
     - pip
     - nodejs 18.16.0
@@ -44,7 +46,7 @@ requirements:
     - nbformat >=5.3.0
     - packaging >=22.0
     - prometheus_client >=0.9
-    - pywinpty >=2.0.1 # [win]
+    - pywinpty >=2.0.1  # [win]
     - pyzmq >=24
     - send2trash >=1.8.2
     - terminado >=0.8.3
@@ -53,31 +55,24 @@ requirements:
     - websocket-client >=1.7
     - overrides >=5.0
 
-{% set xtests = [ "test_culling" ] %}
-
 # test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
 # current anaconda build env
-{% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"] %}
-
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
-{% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
+- "{% set xtests = xtests + [\"test_terminal\", \"test_authorized_requests\"]  %} # [ win ]"  # [ win ]
 
 # Does not work on windows due to test relying on forward slashes
-{% set xtests = xtests + ["test_filefind"]  %} # [ win ]
-
-{% set tests = "not (" + " or ".join(xtests) + ")" %}
+- "{% set xtests = xtests + [\"test_filefind\"]  %} # [ win ]"  # [ win ]
 
 test:
   source_files:
     - tests
   requires:
     - pip
-{%if python != "3.13" %}
     # test deps - circular dependency with pytest-jupyter-server
     - coverage
     - ipykernel
-    - posix # [win]
+    - posix  # [win]
     - pytest >=7.0,<9
     - pytest-console-scripts
     - pytest-cov
@@ -85,17 +80,14 @@ test:
     - pytest-jupyter-server >=0.7
     - requests
     - flaky
-{%endif%}
   imports:
     - jupyter_server
   commands:
     - pip check
     - jupyter server -h
-{%if python != "3.13" %}
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
-{%endif%}
-  #downstreams:
+  <conda_recipe_manager.types.SentinelType object at 0x104a27230>:  #downstreams:
     #- jupyterlab
     #- jupyterlab_server
 
