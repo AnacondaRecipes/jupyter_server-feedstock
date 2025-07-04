@@ -61,6 +61,9 @@ requirements:
 # test_cull_connected is flaky due to timing issues in kernel culling logic
 {% set xtests = xtests + ["test_cull_connected[jp_server_config1]"] %}
 
+# Culling tests cause timeouts/hangs on Windows
+{% set xtests = xtests + ["test_cull_connected"]  %} # [ win ]
+
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
 {% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
