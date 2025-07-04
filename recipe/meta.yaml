@@ -15,8 +15,7 @@ source:
 
 build:
   number: 0
-  # This package depends on nodejs, which isn't available on s390x because it's not included in SOW packages
-  skip: true  # [py<39 or s390x]
+  skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
@@ -24,10 +23,10 @@ build:
 requirements:
   build:
     - patch  # [not win]
-    - m2-patch  # [win]
+    - msys2-patch  # [win]
   host:
     - pip
-    - nodejs 18.16.0
+    - nodejs 20.17.0
     - hatch-jupyter-builder >=0.8.1
     - hatchling >=1.11
     - python
@@ -73,7 +72,6 @@ test:
     - tests
   requires:
     - pip
-{%if python != "3.13" %}
     # test deps - circular dependency with pytest-jupyter-server
     - coverage
     - ipykernel
@@ -85,16 +83,13 @@ test:
     - pytest-jupyter-server >=0.7
     - requests
     - flaky
-{%endif%}
   imports:
     - jupyter_server
   commands:
     - pip check
     - jupyter server -h
-{%if python != "3.13" %}
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
-{%endif%}
   #downstreams:
     #- jupyterlab
     #- jupyterlab_server
