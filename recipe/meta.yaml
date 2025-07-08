@@ -1,13 +1,13 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.15.0" %}
+{% set version = "2.16.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 9d446b8697b4f7337a1b7cdcac40778babdd93ba614b6d68ab1c0c918f1c4084
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 65d4b44fdf2dcbbdfe0aa1ace4a842d4aaf746a2b7b168134d5aaed35621b7f6
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
@@ -15,19 +15,18 @@ source:
 
 build:
   number: 0
-  # This package depends on nodejs, which isn't available on s390x because it's not included in SOW packages
-  skip: true  # [py<39 or s390x]
+  skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
   build:
-    - patch    # [not win]
-    - m2-patch # [win]
+    - patch  # [not win]
+    - msys2-patch  # [win]
   host:
     - pip
-    - nodejs 18.16.0
+    - nodejs 20.17.0
     - hatch-jupyter-builder >=0.8.1
     - hatchling >=1.11
     - python
@@ -44,7 +43,7 @@ requirements:
     - nbformat >=5.3.0
     - packaging >=22.0
     - prometheus_client >=0.9
-    - pywinpty >=2.0.1 # [win]
+    - pywinpty >=2.0.1  # [win]
     - pyzmq >=24
     - send2trash >=1.8.2
     - terminado >=0.8.3
@@ -58,6 +57,12 @@ requirements:
 # test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
 # current anaconda build env
 {% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"] %}
+
+# test_cull_connected is flaky due to timing issues in kernel culling logic
+{% set xtests = xtests + ["test_cull_connected[jp_server_config1]", "test_cull_connected[jp_server_config0]"] %}
+
+# Culling tests cause timeouts/hangs on Windows
+{% set xtests = xtests + ["test_cull_connected"]  %} # [ win ]
 
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
@@ -73,11 +78,10 @@ test:
     - tests
   requires:
     - pip
-{%if python != "3.13" %}
     # test deps - circular dependency with pytest-jupyter-server
     - coverage
     - ipykernel
-    - posix # [win]
+    - posix  # [win]
     - pytest >=7.0,<9
     - pytest-console-scripts
     - pytest-cov
@@ -85,19 +89,16 @@ test:
     - pytest-jupyter-server >=0.7
     - requests
     - flaky
-{%endif%}
   imports:
     - jupyter_server
   commands:
     - pip check
     - jupyter server -h
-{%if python != "3.13" %}
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
-{%endif%}
-  #downstreams:
-    #- jupyterlab
-    #- jupyterlab_server
+  # downstreams:
+  #   - jupyterlab
+  #   - jupyterlab_server
 
 about:
   home: https://jupyter.org
