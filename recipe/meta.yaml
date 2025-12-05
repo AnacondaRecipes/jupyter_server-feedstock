@@ -1,14 +1,5 @@
 {% set name = "jupyter_server" %}
 {% set version = "2.17.0" %}
-{% set xtests = [
-  "test_culling"
-] %}
-{% set xtests = 'xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"]' %}
-{% set xtests = 'xtests + ["test_cull_connected[jp_server_config1]", "test_cull_connected[jp_server_config0]"]' %}
-{% set xtests = 'xtests + ["test_cull_connected"]' %}  # [ win ]
-{% set xtests = 'xtests + ["test_terminal", "test_authorized_requests"]' %}  # [ win ]
-{% set xtests = 'xtests + ["test_filefind"]' %}  # [ win ]
-{% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 package:
   name: {{ name|lower }}
@@ -61,13 +52,21 @@ requirements:
     - jupyter_events >=0.11.0
     - overrides >=5.0  # [py<312]
 
+{% set xtests = [ "test_culling" ] %}
 # test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
 # current anaconda build env
+{% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"] %}
 # test_cull_connected is flaky due to timing issues in kernel culling logic
+{% set xtests = xtests + ["test_cull_connected[jp_server_config1]", "test_cull_connected[jp_server_config0]"] %}
 # Culling tests cause timeouts/hangs on Windows
+{% set xtests = xtests + ["test_cull_connected"]  %} # [ win ]
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
+{% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
 # Does not work on windows due to test relying on forward slashes
+{% set xtests = xtests + ["test_filefind"]  %} # [ win ]
+{% set tests = "not (" + " or ".join(xtests) + ")" %}
+
 test:
   source_files:
     - tests
