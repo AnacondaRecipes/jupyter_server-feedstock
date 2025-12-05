@@ -65,6 +65,8 @@ requirements:
 {% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
 # Does not work on windows due to test relying on forward slashes
 {% set xtests = xtests + ["test_filefind"]  %} # [ win ]
+# File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
+{% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 test:
