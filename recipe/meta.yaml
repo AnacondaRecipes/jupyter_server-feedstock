@@ -53,20 +53,27 @@ requirements:
     - overrides >=5.0  # [py<312]
 
 {% set xtests = [ "test_culling" ] %}
+
 # test_restart_kernel does not seem to be problematic in standalone testing, but is flaky in the
 # current anaconda build env
 {% set xtests = xtests + ["test_restart_kernel[jp_server_config0]", "test_connection[jp_server_config0]", "test_execution_state"] %}
+
 # test_cull_connected is flaky due to timing issues in kernel culling logic
 {% set xtests = xtests + ["test_cull_connected[jp_server_config1]", "test_cull_connected[jp_server_config0]"] %}
+
 # Culling tests cause timeouts/hangs on Windows
 {% set xtests = xtests + ["test_cull_connected"]  %} # [ win ]
+
 # some tests aren't working on windows due shell config in the anaconda build env
 # Error: "FileNotFoundError: The command was not found or was not executable: /bin/bash"
 {% set xtests = xtests + ["test_terminal", "test_authorized_requests"]  %} # [ win ]
+
 # Does not work on windows due to test relying on forward slashes
 {% set xtests = xtests + ["test_filefind"]  %} # [ win ]
+
 # File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
 {% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
+
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 test:
