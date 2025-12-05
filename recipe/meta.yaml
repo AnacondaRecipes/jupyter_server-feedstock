@@ -21,9 +21,6 @@ build:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
-  build:
-    - patch  # [not win]
-    - msys2-patch  # [win]
   host:
     - pip
     - nodejs 20.17.0
