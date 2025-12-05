@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.16.0" %}
+{% set version = "2.17.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 65d4b44fdf2dcbbdfe0aa1ace4a842d4aaf746a2b7b168134d5aaed35621b7f6
+  sha256: c38ea898566964c888b4772ae1ed58eca84592e88251d2cfc4d171f81f7e99d5
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
@@ -21,9 +21,6 @@ build:
     - jupyter-server = jupyter_server.serverapp:main
 
 requirements:
-  build:
-    - patch  # [not win]
-    - msys2-patch  # [win]
   host:
     - pip
     - nodejs 20.17.0
@@ -37,7 +34,6 @@ requirements:
     - jinja2 >=3.0.3
     - jupyter_client >=7.4.4
     - jupyter_core >=4.12,!=5.0.*
-    - jupyter_events >=0.11.0
     - jupyter_server_terminals >=0.4.4
     - nbconvert-core >=6.4.4
     - nbformat >=5.3.0
@@ -50,7 +46,8 @@ requirements:
     - tornado >=6.2.0
     - traitlets >=5.6.0
     - websocket-client >=1.7
-    - overrides >=5.0
+    - jupyter_events >=0.11.0
+    - overrides >=5.0  # [py<312]
 
 {% set xtests = [ "test_culling" ] %}
 
@@ -70,6 +67,9 @@ requirements:
 
 # Does not work on windows due to test relying on forward slashes
 {% set xtests = xtests + ["test_filefind"]  %} # [ win ]
+
+# File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
+{% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
