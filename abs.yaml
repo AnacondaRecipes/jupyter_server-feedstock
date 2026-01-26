@@ -1,2 +1,5 @@
 build_env_vars:
   ANACONDA_ROCKET_ENABLE_PY314 : yes
+
+channels:
+  - https://staging.continuum.io/pbp/fs/terminado-feedstock/pr14/19b7cf8
