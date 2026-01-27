@@ -23,7 +23,6 @@ index 440bcf9c0..603a9bfdf 100644
 +else:
 +    # pytest-jupyter not available for py314 yet
 +    pytest_plugins = []
-+ 
-+ 
++
++
  def pytest_addoption(parser):
-
