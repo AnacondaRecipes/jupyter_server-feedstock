@@ -12,8 +12,6 @@ source:
     # tests fail on some platforms because server doesn't start as
     # root by default
     - 00_allow_root_in_tests.patch
-    # skip pytest-jupyter-server plugin on py314 (not available yet)
-    - 01_optional_pytest_jupyter.patch
 
 build:
   number: 1
@@ -73,9 +71,6 @@ requirements:
 # File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
 {% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
-# Tests requiring jp_server_config fixture (pytest-jupyter-server) - skip on py314
-{% set xtests = xtests + ["test_async_authorizer", "test_jupyter_handler_auth_permissive", "test_websocket_auth_permissive", "test_cull_idle"]  %} # [py314]
-
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 test:
@@ -93,8 +88,6 @@ test:
     - pytest-timeout
     # TODO: Enable for Python 3.14 when pytest-jupyter-server will be available on the main channel.
     - pytest-jupyter-server >=0.7  # [py<314]
-    # Failed: async def functions are not natively supported.
-    - pytest-tornasync >=0.6.0  # [py==314]
     - requests
     - flaky
   imports:
@@ -104,7 +97,6 @@ test:
     - jupyter server -h
     - echo "{{ tests }}"
     # TODO: Re-check this for Python 3.14 when pytest-jupyter-server will be available on the main channel.
-    - pytest -vvv --ignore=tests/auth/test_authorizer.py --ignore=tests/base/test_handlers.py --ignore=tests/base/test_websocket.py --ignore=tests/services/kernels/test_cull.py  -k "{{ tests }}"  # [py==314]
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70  # [py<314]
 
   # downstreams:
