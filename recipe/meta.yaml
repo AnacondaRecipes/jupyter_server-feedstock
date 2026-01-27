@@ -12,6 +12,8 @@ source:
     # tests fail on some platforms because server doesn't start as
     # root by default
     - 00_allow_root_in_tests.patch
+    # skip pytest-jupyter-server plugin on py314 (not available yet)
+    - 01_optional_pytest_jupyter.patch
 
 build:
   number: 1
@@ -97,7 +99,7 @@ test:
     - jupyter server -h
     - echo "{{ tests }}"
     # TODO: Enable for Python 3.14 when pytest-jupyter-server will be available on the main channel.
-    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70  # [py<314]
+    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
   # downstreams:
   #   - jupyterlab
   #   - jupyterlab_server
