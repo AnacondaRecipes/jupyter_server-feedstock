@@ -93,6 +93,8 @@ test:
     - pytest-timeout
     # TODO: Enable for Python 3.14 when pytest-jupyter-server will be available on the main channel.
     - pytest-jupyter-server >=0.7  # [py<314]
+    # Failed: async def functions are not natively supported.
+    - pytest-tornasync >=0.6.0  # [py==314]
     - requests
     - flaky
   imports:
@@ -101,8 +103,8 @@ test:
     - pip check
     - jupyter server -h
     - echo "{{ tests }}"
-    # TODO: Enable for Python 3.14 when pytest-jupyter-server will be available on the main channel.
-    - pytest -vvv --ignore=tests/auth/test_authorizer.py --ignore=tests/base/test_handlers.py --ignore=tests/base/test_websocket.py --ignore=tests/services/kernels/test_cull.py  -k "{{ tests }}"  # [py>=314]
+    # TODO: Re-check this for Python 3.14 when pytest-jupyter-server will be available on the main channel.
+    - pytest -vvv --ignore=tests/auth/test_authorizer.py --ignore=tests/base/test_handlers.py --ignore=tests/base/test_websocket.py --ignore=tests/services/kernels/test_cull.py  -k "{{ tests }}"  # [py==314]
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70  # [py<314]
 
   # downstreams:
