@@ -73,6 +73,9 @@ requirements:
 # File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
 {% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
+# Tests requiring jp_server_config fixture (pytest-jupyter-server) - skip on py314
+{% set xtests = xtests + ["test_async_authorizer", "test_jupyter_handler_auth_permissive", "test_websocket_auth_permissive", "test_cull_idle"]  %} # [py314]
+
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
 test:
