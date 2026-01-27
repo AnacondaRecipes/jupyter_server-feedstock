@@ -1,6 +1,6 @@
 --- a/tests/conftest.py
 +++ b/tests/conftest.py
-@@ -15,7 +15,17 @@ from tests.extension.mockextensions.app import MockExtensionApp
+@@ -15,7 +15,11 @@ from tests.extension.mockextensions.app import MockExtensionApp
  # dones not work in CI.
  os.environ["PYWINPTY_BACKEND"] = "1"
  
@@ -9,13 +9,8 @@
 +if sys.version_info < (3, 14):
 +    pytest_plugins = ["jupyter_server.pytest_plugin"]
 +else:
-+    # pytest-jupyter not available for py314 yet; stub so collection succeeds
-+    pytest_plugins = []
-+
-+    @pytest.fixture
-+    def jp_server_config():
-+        """Stub for py314; tests requiring the plugin are excluded via -k."""
-+        return {}
++    # pytest-jupyter not available for py314 yet; use stub plugin so collection succeeds
++    pytest_plugins = ["tests.py314_stub_plugin"]
  
  
  def pytest_addoption(parser):
