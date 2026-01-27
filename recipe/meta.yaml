@@ -81,7 +81,7 @@ test:
     # test deps - circular dependency with pytest-jupyter-server
     - coverage
     - ipykernel
-    - posix  # [win]
+    - msys2-posix  # [win]
     - pytest >=7.0,<9
     - pytest-console-scripts
     - pytest-cov
