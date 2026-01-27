@@ -4,14 +4,14 @@ Date: Tue, 27 Jan 2026 13:53:29 +0200
 Subject: [PATCH] Skip pytest-jupyter-server plugin on py314
 
 ---
- tests/conftest.py | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tests/conftest.py | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/tests/conftest.py b/tests/conftest.py
 index 440bcf9c0..603a9bfdf 100644
 --- a/tests/conftest.py
 +++ b/tests/conftest.py
-@@ -15,7 +15,11 @@ from tests.extension.mockextensions.app import MockExtensionApp
+@@ -15,7 +15,13 @@ from tests.extension.mockextensions.app import MockExtensionApp
  # dones not work in CI.
  os.environ["PYWINPTY_BACKEND"] = "1"
  
@@ -23,8 +23,8 @@ index 440bcf9c0..603a9bfdf 100644
 +else:
 +    # pytest-jupyter not available for py314 yet
 +    pytest_plugins = []
- 
- 
++ 
++ 
  def pytest_addoption(parser):
 -- 
 2.50.1 (Apple Git-155)
