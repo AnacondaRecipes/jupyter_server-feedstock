@@ -14,7 +14,6 @@ source:
     - 00_allow_root_in_tests.patch
     # skip pytest-jupyter-server plugin on py314 (not available yet)
     - 01_optional_pytest_jupyter.patch
-    - 02_py314_jp_config_stub.patch
 
 build:
   number: 1
