@@ -14,7 +14,7 @@ source:
     - 00_allow_root_in_tests.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
@@ -23,7 +23,7 @@ build:
 requirements:
   host:
     - pip
-    - nodejs 20.17.0
+    - nodejs 24.13.0
     - hatch-jupyter-builder >=0.8.1
     - hatchling >=1.11
     - python
@@ -81,7 +81,7 @@ test:
     # test deps - circular dependency with pytest-jupyter-server
     - coverage
     - ipykernel
-    - posix  # [win]
+    - msys2-posix  # [win]
     - pytest >=7.0,<9
     - pytest-console-scripts
     - pytest-cov
@@ -96,6 +96,7 @@ test:
     - jupyter server -h
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
+
   # downstreams:
   #   - jupyterlab
   #   - jupyterlab_server
