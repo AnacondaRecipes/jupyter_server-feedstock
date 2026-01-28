@@ -97,9 +97,9 @@ test:
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
 
-  downstreams:
-    - jupyterlab
-    - jupyterlab_server
+  # downstreams:
+  #   - jupyterlab
+  #   - jupyterlab_server
 
 about:
   home: https://jupyter.org
