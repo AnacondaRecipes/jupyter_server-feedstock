@@ -86,8 +86,7 @@ test:
     - pytest-console-scripts
     - pytest-cov
     - pytest-timeout
-    # TODO: Enable for Python 3.14 when pytest-jupyter-server will be available on the main channel.
-    - pytest-jupyter-server >=0.7  # [py<314]
+    - pytest-jupyter-server >=0.7
     - requests
     - flaky
   imports:
@@ -96,12 +95,11 @@ test:
     - pip check
     - jupyter server -h
     - echo "{{ tests }}"
-    # TODO: Re-check this for Python 3.14 when pytest-jupyter-server will be available on the main channel.
-    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70  # [py<314]
+    - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
 
-  # downstreams:
-  #   - jupyterlab
-  #   - jupyterlab_server
+  downstreams:
+    - jupyterlab
+    - jupyterlab_server
 
 about:
   home: https://jupyter.org
