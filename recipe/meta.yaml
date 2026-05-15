@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.18.0" %}
+{% set version = "2.18.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 568b27bce4320a53c3eebf1bdcbee9acf48a8ab7f66ec83d900ca9909d4fb770
+  sha256: 06b4f40d8a7a00bb39d5216859c81374a0e7cfefe6d8a5a7facc5a5c37c679a7
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
