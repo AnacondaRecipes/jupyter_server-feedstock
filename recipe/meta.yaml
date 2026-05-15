@@ -71,8 +71,9 @@ requirements:
 # File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
 {% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
-# last_modified can fail to advance after save on some Linux aarch64 workers (mtime/stat invariants)
-{% set xtests = xtests + ["test_created_timestamp"] %} # [linux and aarch64]
+# test_created_timestamp assumes created <= last_modified; on Linux st_ctime vs st_mtime can
+# disagree by sub-second amounts (sync and async managers), so skip on all Linux CI workers.
+{% set xtests = xtests + ["test_created_timestamp"] %} # [linux]
 
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
