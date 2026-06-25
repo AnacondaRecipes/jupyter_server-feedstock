@@ -77,17 +77,7 @@ requirements:
 
 # 2.20.0 upstream tests that fail in Anaconda CI on non-Windows platforms (signature store
 # corruption handling, transport encryption kernel env, connect_url API rename, port binding).
-{% set xtests = xtests + [
-  "test_save_before_and_after_signature_store_corruption",
-  "test_save_raises_when_signature_store_unrecoverable",
-  "test_resolve_path_missing_kernel_reports_unresolved",
-  "test_kernel_start_kwargs_transport_encryption",
-  "test_transport_encryption",
-  "test_connect_url",
-  "test_find_http_port_zero_resolves_real_port",
-  "test_urls[config9",
-  "test_urls[config10",
-] %} # [unix]
+{% set xtests = xtests + ["test_save_before_and_after_signature_store_corruption", "test_save_raises_when_signature_store_unrecoverable", "test_resolve_path_missing_kernel_reports_unresolved", "test_kernel_start_kwargs_transport_encryption", "test_transport_encryption", "test_connect_url", "test_find_http_port_zero_resolves_real_port", "test_urls[config9", "test_urls[config10"] %} # [unix]
 
 {% set tests = "not (" + " or ".join(xtests) + ")" %}
 
