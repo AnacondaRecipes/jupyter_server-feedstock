@@ -1,5 +1,5 @@
 {% set name = "jupyter_server" %}
-{% set version = "2.20.0" %}
+{% set version = "2.21.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: b5778ba337d8015a3dc2b80803ecdd5ac18d3797fddf61a50ea5fb472b4ebe14
+  sha256: a8960aa29263f6041283e97d4756b099fb49b767baab6371891ecb1bd40a63df
   patches:
     # tests fail on some platforms because server doesn't start as
     # root by default
@@ -104,7 +104,6 @@ test:
     - jupyter server -h
     - echo "{{ tests }}"
     - pytest -vvv --cov=jupyter_server -k "{{ tests }}" --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=70
-
   # downstreams:
   #   - jupyterlab
   #   - jupyterlab_server
