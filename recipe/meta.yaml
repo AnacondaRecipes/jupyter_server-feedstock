@@ -14,7 +14,7 @@ source:
     - 00_allow_root_in_tests.patch
 
 build:
-  number: 0
+  number: 2
   skip: true  # [py<310]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   entry_points:
@@ -23,7 +23,7 @@ build:
 requirements:
   host:
     - pip
-    - nodejs 24.13.0
+    - nodejs 24
     - hatch-jupyter-builder >=0.8.1
     - hatchling >=1.11
     - python
@@ -71,9 +71,9 @@ requirements:
 # File permission issue on Windows CI - OSError: [WinError 1314] A required privilege is not held by the client
 {% set xtests = xtests + ["test_bad_symlink", "test_good_symlink"]  %} # [ win ]
 
-# test_created_timestamp assumes created <= last_modified; on Linux st_ctime vs st_mtime can
-# disagree by sub-second amounts (sync and async managers), so skip on all Linux CI workers.
-{% set xtests = xtests + ["test_created_timestamp"] %} # [linux]
+# test_created_timestamp assumes created <= last_modified; st_ctime vs st_mtime can
+# disagree by sub-second amounts (sync and async managers), so skip on all Linux/WoA CI workers.
+{% set xtests = xtests + ["test_created_timestamp"] %} # [linux or (win and arm64)]
 
 # 2.20.0 upstream tests that fail in Anaconda CI on non-Windows platforms (signature store
 # corruption handling, transport encryption kernel env, connect_url API rename, port binding).
